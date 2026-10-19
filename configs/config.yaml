@@ -1,0 +1,35 @@
+# ---- dataset paths (verified 2026-10-14) ----
+paths:
+  dicom_root: "E:/MiniProject/DATASET_ct/lidc_idri"   # 1010 patient folders
+  xml_root:   "E:/MiniProject/LIDC-XML-only"          # 1319 xml files (reference; pylidc uses its own DB)
+  processed:  "E:/MiniProject/processed"              # ROI crops land here, off the repo
+  outputs:    "outputs"
+
+model:
+  checkpoint: "checkpoints/MedSAM2_CTLesion.pt"
+  cfg_name:   "configs/sam2.1_hiera_t512.yaml"   # from the MedSAM2 repo
+  device:     "cuda"
+
+preprocess:
+  window_level: -600        # lung window
+  window_width: 1500
+  roi_size:  128            # in-plane crop (px) around nodule centroid
+  roi_depth: 16             # slices each side of the centroid slice
+
+annotation:
+  consensus_level: 0.5      # agreement fraction across the 4 radiologists
+  min_diameter_mm: 3.0      # LIDC marks >=3mm nodules fully
+
+prompt:
+  # 0, set by ablation on 2026-10-14 (scripts/06_ablate.py, outputs/ablation_padding.csv).
+  # Dice falls monotonically as padding grows -- 0.789 / 0.687 / 0.534 / 0.228
+  # for 0 / 2 / 5 / 10 px -- and the diameter bias tracks it exactly
+  # (-0.02 / +1.17 / +3.26 / +10.03 mm). MedSAM2 fills toward the prompt box,
+  # so any padding is segmented as nodule. The official reference
+  # (medsam2_infer_3D_CT.py) likewise has its box expansion commented out.
+  bbox_padding_px: 0
+  propagate: true           # use MedSAM2 volume propagation
+
+eval:
+  n_scans: 50               # cap for a first baseline run
+  seed: 42

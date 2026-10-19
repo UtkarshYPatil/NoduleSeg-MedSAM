@@ -1,0 +1,40 @@
+# never commit medical images or weights
+/data/
+*.dcm
+*.npz
+*.mhd
+*.raw
+*.nii
+*.nii.gz
+/checkpoints/
+*.pt
+*.pth
+external/
+
+# outputs: keep the csv results, drop the bulk
+/outputs/**
+!/outputs/
+!/outputs/*.csv
+!/outputs/*.png
+!/outputs/*.json
+!/outputs/figures/
+!/outputs/figures/*.png
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+
+# archived supersededscripts
+_archive/
+
+.env
